@@ -14,7 +14,7 @@
  * assert(doc.endsWith("hello, world\n"))
  * ```
  */
-package roff
+package ai.solace.tui.roff
 
 /**
  * A ROFF document, consisting of lines.
@@ -290,7 +290,7 @@ private fun escapeLeadingCc(s: String): String =
  * text line: dashes and backslashes are escaped with a backslash.
  * Apostrophes are not handled.
  */
-private fun escapeInline(text: String): String =
+internal fun escapeInline(text: String): String =
     text.replace("\\", "\\\\").replace("-", "\\-")
 
 /**

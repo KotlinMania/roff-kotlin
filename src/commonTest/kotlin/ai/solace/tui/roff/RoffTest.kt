@@ -1,4 +1,4 @@
-package roff
+package ai.solace.tui.roff
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -11,17 +11,17 @@ class RoffTest {
 
     @Test
     fun escapeDash() {
-        assertEquals("\\-", escapeInlineTest("-"))
+        assertEquals("\\-", escapeInline("-"))
     }
 
     @Test
     fun escapeBackslash() {
-        assertEquals("\\\\x", escapeInlineTest("\\x"))
+        assertEquals("\\\\x", escapeInline("\\x"))
     }
 
     @Test
     fun escapeBackslashAndDash() {
-        assertEquals("\\\\\\-", escapeInlineTest("\\-"))
+        assertEquals("\\\\\\-", escapeInline("\\-"))
     }
 
     @Test
@@ -31,7 +31,7 @@ class RoffTest {
 
     @Test
     fun escapePlain() {
-        assertEquals("abc", escapeInlineTest("abc"))
+        assertEquals("abc", escapeInline("abc"))
     }
 
     @Test
@@ -158,9 +158,6 @@ class RoffTest {
     }
 }
 
-// Helper functions that expose private functions for testing
-private fun escapeInlineTest(text: String): String =
-    text.replace("\\", "\\\\").replace("-", "\\-")
-
+// Helper function for testing escapeLeadingCc
 private fun escapeLeadingCcTest(s: String): String =
     s.replace("\n.", "\n\\&.").replace("\n'", "\n\\&'")

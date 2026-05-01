@@ -223,7 +223,6 @@ internal sealed class Line {
                                 is Inline.Roman -> inline.text
                                 is Inline.Italic -> inline.text
                                 is Inline.Bold -> inline.text
-                                else -> ""
                             }
                             var text = escapeInline(rawText)
                             if (handleApostrophes) {
@@ -251,7 +250,6 @@ internal sealed class Line {
                                     }
                                     out.append(text)
                                 }
-                                else -> {}
                             }
                         }
                     }

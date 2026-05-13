@@ -27,8 +27,6 @@ jobs:
 
       - name: Build and test Windows target
         run: ./gradlew mingwX64Test --no-configuration-cache
-<<<<<<< HEAD
-=======
 
       - name: Upload test reports (Windows)
         if: success() || failure()
@@ -40,4 +38,3 @@ jobs:
             build/test-results/
           retention-days: 7
           if-no-files-found: warn
->>>>>>> chore/build-homogenization-part-2

@@ -31,6 +31,8 @@ jobs:
           compileKotlinMacosArm64
           macosArm64Test
           --no-configuration-cache
+<<<<<<< HEAD
+=======
 
       - name: Upload test reports (macOS)
         if: success() || failure()
@@ -42,3 +44,4 @@ jobs:
             build/test-results/
           retention-days: 7
           if-no-files-found: warn
+>>>>>>> chore/build-homogenization-part-2

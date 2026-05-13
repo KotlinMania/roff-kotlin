@@ -25,6 +25,17 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v6.1.0
 
+<<<<<<< HEAD
+      - name: Build and test iOS targets
+        run: >
+          ./gradlew
+          compileKotlinIosArm64
+          compileKotlinIosSimulatorArm64
+          iosSimulatorArm64Test
+          assembleMimeXCFramework
+          -PenableIosSimulatorTests=true
+          --no-configuration-cache
+=======
       - name: Build and test iOS targets + XCFramework
         # The XCFramework name is derived per-repo from the
         # `XCFramework("<Name>")` declaration in build.gradle.kts so this
@@ -59,3 +70,4 @@ jobs:
             build/test-results/
           retention-days: 7
           if-no-files-found: warn
+>>>>>>> chore/build-homogenization-part-2

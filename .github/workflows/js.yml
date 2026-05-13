@@ -50,6 +50,8 @@ jobs:
           jsBrowserTest
           jsNodeTest
           --no-configuration-cache
+<<<<<<< HEAD
+=======
 
       - name: Upload test reports (JS)
         if: success() || failure()
@@ -61,3 +63,4 @@ jobs:
             build/test-results/
           retention-days: 7
           if-no-files-found: warn
+>>>>>>> chore/build-homogenization-part-2

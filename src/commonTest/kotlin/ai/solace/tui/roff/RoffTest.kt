@@ -8,7 +8,6 @@ import kotlin.test.assertTrue
  * Tests for the ROFF library, ported from the Rust test suite.
  */
 class RoffTest {
-
     @Test
     fun escapeDash() {
         assertEquals("\\-", escapeInline("-"))
@@ -78,9 +77,10 @@ class RoffTest {
 
     @Test
     fun renderLineBreak() {
-        val text = Roff()
-            .text(roman("roman"), Inline.LineBreak, roman("more"))
-            .toRoff()
+        val text =
+            Roff()
+                .text(roman("roman"), Inline.LineBreak, roman("more"))
+                .toRoff()
         assertEquals("roman\n.br\nmore\n", text)
     }
 
@@ -106,48 +106,45 @@ class RoffTest {
     @Test
     fun demoManPage() {
         // Test from demo.rs
-        val page = Roff()
-            .control("TH", "CORRUPT", "1")
-            .control("SH", "NAME")
-            .text(roman("corrupt - modify files by randomly changing bits"))
-            .control("SH", "SYNOPSIS")
-            .text(
-                bold("corrupt"),
-                " ".toInline(),
-                "[".toInline(),
-                bold("-n"),
-                " ".toInline(),
-                italic("BITS"),
-                "]".toInline(),
-                " ".toInline(),
-                "[".toInline(),
-                bold("--bits"),
-                " ".toInline(),
-                italic("BITS"),
-                "]".toInline(),
-                " ".toInline(),
-                italic("file"),
-                "...".toInline()
-            )
-            .control("SH", "DESCRIPTION")
-            .text(
-                bold("corrupt"),
-                " modifies files by toggling a randomly chosen bit.".toInline()
-            )
-            .control("SH", "OPTIONS")
-            .control("TP")
-            .text(
-                bold("-n"),
-                ", ".toInline(),
-                bold("--bits"),
-                "=".toInline(),
-                italic("BITS")
-            )
-            .text(
-                "Set the number of bits to modify. ".toInline(),
-                "Default is one bit.".toInline()
-            )
-            .toRoff()
+        val page =
+            Roff()
+                .control("TH", "CORRUPT", "1")
+                .control("SH", "NAME")
+                .text(roman("corrupt - modify files by randomly changing bits"))
+                .control("SH", "SYNOPSIS")
+                .text(
+                    bold("corrupt"),
+                    " ".toInline(),
+                    "[".toInline(),
+                    bold("-n"),
+                    " ".toInline(),
+                    italic("BITS"),
+                    "]".toInline(),
+                    " ".toInline(),
+                    "[".toInline(),
+                    bold("--bits"),
+                    " ".toInline(),
+                    italic("BITS"),
+                    "]".toInline(),
+                    " ".toInline(),
+                    italic("file"),
+                    "...".toInline(),
+                ).control("SH", "DESCRIPTION")
+                .text(
+                    bold("corrupt"),
+                    " modifies files by toggling a randomly chosen bit.".toInline(),
+                ).control("SH", "OPTIONS")
+                .control("TP")
+                .text(
+                    bold("-n"),
+                    ", ".toInline(),
+                    bold("--bits"),
+                    "=".toInline(),
+                    italic("BITS"),
+                ).text(
+                    "Set the number of bits to modify. ".toInline(),
+                    "Default is one bit.".toInline(),
+                ).toRoff()
 
         // Verify structure
         assertTrue(page.contains(".TH CORRUPT 1"))

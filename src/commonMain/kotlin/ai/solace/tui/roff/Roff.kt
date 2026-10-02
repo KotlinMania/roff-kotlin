@@ -74,12 +74,13 @@ class Roff {
     /**
      * Render as ROFF source text that can be fed to a ROFF implementation.
      */
-    fun render(): String = buildString {
-        append(APOSTROPHE_PREAMBLE)
-        for (line in lines) {
-            line.render(this, handleApostrophes = true)
+    fun render(): String =
+        buildString {
+            append(APOSTROPHE_PREAMBLE)
+            for (line in lines) {
+                line.render(this, handleApostrophes = true)
+            }
         }
-    }
 
     /**
      * Render without handling apostrophes specially.
@@ -93,11 +94,12 @@ class Roff {
      * for completeness, and for testing, this method is provided to
      * avoid it.
      */
-    fun toRoff(): String = buildString {
-        for (line in lines) {
-            line.render(this, handleApostrophes = false)
+    fun toRoff(): String =
+        buildString {
+            for (line in lines) {
+                line.render(this, handleApostrophes = false)
+            }
         }
-    }
 
     /**
      * Extend this document with lines from another Roff document.
@@ -128,17 +130,23 @@ sealed class Inline {
      * Text in the "roman" font, which is the normal font if nothing
      * else is specified.
      */
-    data class Roman(val text: String) : Inline()
+    data class Roman(
+        val text: String,
+    ) : Inline()
 
     /**
      * Text in the italic (slanted) font.
      */
-    data class Italic(val text: String) : Inline()
+    data class Italic(
+        val text: String,
+    ) : Inline()
 
     /**
      * Text in a bold face font.
      */
-    data class Bold(val text: String) : Inline()
+    data class Bold(
+        val text: String,
+    ) : Inline()
 
     /**
      * A hard line break. This is an inline element so it's easy to
@@ -185,13 +193,15 @@ internal sealed class Line {
         /** Name of control request or macro being invoked. */
         val name: String,
         /** Arguments on control line. */
-        val args: List<String>
+        val args: List<String>,
     ) : Line()
 
     /**
      * A text line.
      */
-    data class Text(val inlines: List<Inline>) : Line()
+    data class Text(
+        val inlines: List<Inline>,
+    ) : Line()
 
     /**
      * Generate a ROFF line.
@@ -219,11 +229,12 @@ internal sealed class Line {
                             }
                         }
                         is Inline.Roman, is Inline.Italic, is Inline.Bold -> {
-                            val rawText = when (inline) {
-                                is Inline.Roman -> inline.text
-                                is Inline.Italic -> inline.text
-                                is Inline.Bold -> inline.text
-                            }
+                            val rawText =
+                                when (inline) {
+                                    is Inline.Roman -> inline.text
+                                    is Inline.Italic -> inline.text
+                                    is Inline.Bold -> inline.text
+                                }
                             var text = escapeInline(rawText)
                             if (handleApostrophes) {
                                 text = escapeApostrophes(text)

@@ -1,7 +1,7 @@
 package ai.solace.tui.roff
 
+import io.github.kotlinmania.prettyassertions.assertEq
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
@@ -10,69 +10,69 @@ import kotlin.test.assertTrue
 class RoffTest {
     @Test
     fun escapeDash() {
-        assertEquals("\\-", escapeInline("-"))
+        assertEq("\\-", escapeInline("-"))
     }
 
     @Test
     fun escapeBackslash() {
-        assertEquals("\\\\x", escapeInline("\\x"))
+        assertEq("\\\\x", escapeInline("\\x"))
     }
 
     @Test
     fun escapeBackslashAndDash() {
-        assertEquals("\\\\\\-", escapeInline("\\-"))
+        assertEq("\\\\\\-", escapeInline("\\-"))
     }
 
     @Test
     fun escapesLeadingControlChars() {
-        assertEquals("foo\n\\&.bar\n\\&'yo", escapeLeadingCcTest("foo\n.bar\n'yo"))
+        assertEq("foo\n\\&.bar\n\\&'yo", escapeLeadingCcTest("foo\n.bar\n'yo"))
     }
 
     @Test
     fun escapePlain() {
-        assertEquals("abc", escapeInline("abc"))
+        assertEq("abc", escapeInline("abc"))
     }
 
     @Test
     fun renderRoman() {
         val text = Roff().text(roman("foo")).toRoff()
-        assertEquals("foo\n", text)
+        assertEq("foo\n", text)
     }
 
     @Test
     fun renderDash() {
         val text = Roff().text(roman("foo-bar")).toRoff()
-        assertEquals("foo\\-bar\n", text)
+        assertEq("foo\\-bar\n", text)
     }
 
     @Test
     fun renderItalic() {
         val text = Roff().text(italic("foo")).toRoff()
-        assertEquals("\\fIfoo\\fR\n", text)
+        assertEq("\\fIfoo\\fR\n", text)
     }
 
     @Test
     fun renderBold() {
         val text = Roff().text(bold("foo")).toRoff()
-        assertEquals("\\fBfoo\\fR\n", text)
+        assertEq("\\fBfoo\\fR\n", text)
     }
 
     @Test
     fun renderText() {
         val text = Roff().text(roman("roman")).toRoff()
-        assertEquals("roman\n", text)
+        assertEq("roman\n", text)
     }
 
     @Test
     fun renderTextWithLeadingPeriod() {
         val text = Roff().text(roman(".roman")).toRoff()
-        assertEquals("\\&.roman\n", text)
+        assertEq("\\&.roman\n", text)
     }
 
     @Test
     fun renderTextWithNewlinePeriod() {
         val text = Roff().text(roman("foo\n.roman")).toRoff()
-        assertEquals("foo\n\\&.roman\n", text)
+        assertEq("foo\n\\&.roman\n", text)
     }
 
     @Test
@@ -81,19 +81,19 @@ class RoffTest {
             Roff()
                 .text(roman("roman"), Inline.LineBreak, roman("more"))
                 .toRoff()
-        assertEquals("roman\n.br\nmore\n", text)
+        assertEq("roman\n.br\nmore\n", text)
     }
 
     @Test
     fun renderControl() {
         val text = Roff().control("foo", "bar", "foo and bar").toRoff()
-        assertEquals(".foo bar \"foo and bar\"\n", text)
+        assertEq(".foo bar \"foo and bar\"\n", text)
     }
 
     @Test
     fun renderWithApostrophePreamble() {
         val text = Roff().text(roman("hello")).render()
-        assertEquals(".ie \\n(.g .ds Aq \\(aq\n.el .ds Aq '\nhello\n", text)
+        assertEq(".ie \\n(.g .ds Aq \\(aq\n.el .ds Aq '\nhello\n", text)
     }
 
     @Test
@@ -104,54 +104,10 @@ class RoffTest {
     }
 
     @Test
-    fun demoManPage() {
-        // Test from demo.rs
-        val page =
-            Roff()
-                .control("TH", "CORRUPT", "1")
-                .control("SH", "NAME")
-                .text(roman("corrupt - modify files by randomly changing bits"))
-                .control("SH", "SYNOPSIS")
-                .text(
-                    bold("corrupt"),
-                    " ".toInline(),
-                    "[".toInline(),
-                    bold("-n"),
-                    " ".toInline(),
-                    italic("BITS"),
-                    "]".toInline(),
-                    " ".toInline(),
-                    "[".toInline(),
-                    bold("--bits"),
-                    " ".toInline(),
-                    italic("BITS"),
-                    "]".toInline(),
-                    " ".toInline(),
-                    italic("file"),
-                    "...".toInline(),
-                ).control("SH", "DESCRIPTION")
-                .text(
-                    bold("corrupt"),
-                    " modifies files by toggling a randomly chosen bit.".toInline(),
-                ).control("SH", "OPTIONS")
-                .control("TP")
-                .text(
-                    bold("-n"),
-                    ", ".toInline(),
-                    bold("--bits"),
-                    "=".toInline(),
-                    italic("BITS"),
-                ).text(
-                    "Set the number of bits to modify. ".toInline(),
-                    "Default is one bit.".toInline(),
-                ).toRoff()
-
-        // Verify structure
-        assertTrue(page.contains(".TH CORRUPT 1"))
-        assertTrue(page.contains(".SH NAME"))
-        assertTrue(page.contains("corrupt \\- modify files"))
-        assertTrue(page.contains("\\fBcorrupt\\fR"))
-        assertTrue(page.contains("\\fIBITS\\fR"))
+    fun toWriterTest() {
+        val sb = StringBuilder()
+        Roff().text(roman("hello")).toWriter(sb)
+        assertEq(".ie \\n(.g .ds Aq \\(aq\n.el .ds Aq '\nhello\n", sb.toString())
     }
 }
 

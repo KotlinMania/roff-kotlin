@@ -74,13 +74,18 @@ class Roff {
     /**
      * Render as ROFF source text that can be fed to a ROFF implementation.
      */
-    fun render(): String =
-        buildString {
-            append(APOSTROPHE_PREAMBLE)
-            for (line in lines) {
-                line.render(this, handleApostrophes = true)
-            }
+    fun render(): String = toWriter(StringBuilder()).toString()
+
+    /**
+     * Write to an [Appendable] writer.
+     */
+    fun <A : Appendable> toWriter(w: A): A {
+        w.append(APOSTROPHE_PREAMBLE)
+        for (line in lines) {
+            line.render(w, Apostrophes.Handle)
         }
+        return w
+    }
 
     /**
      * Render without handling apostrophes specially.
@@ -97,7 +102,7 @@ class Roff {
     fun toRoff(): String =
         buildString {
             for (line in lines) {
-                line.render(this, handleApostrophes = false)
+                line.render(this, Apostrophes.DontHandle)
             }
         }
 
@@ -114,6 +119,22 @@ class Roff {
          * Create a new empty Roff document.
          */
         fun new(): Roff = Roff()
+
+        /**
+         * Create a Roff document from an inline element.
+         */
+        fun from(other: Inline): Roff = Roff().apply { text(other) }
+
+        /**
+         * Create a Roff document from an iterator of Roff documents.
+         */
+        fun fromIter(iter: Iterable<Roff>): Roff {
+            val r = Roff()
+            for (i in iter) {
+                r.lines.addAll(i.lines)
+            }
+            return r
+        }
     }
 }
 
@@ -153,6 +174,13 @@ sealed class Inline {
      * insert a line break in a paragraph.
      */
     data object LineBreak : Inline()
+
+    companion object {
+        /**
+         * Turn a string into inline text in the roman font.
+         */
+        fun from(s: String): Inline = roman(s)
+    }
 }
 
 /**
@@ -208,7 +236,7 @@ internal sealed class Line {
      *
      * All the ROFF code generation and special handling happens here.
      */
-    fun render(out: Appendable, handleApostrophes: Boolean) {
+    fun render(out: Appendable, handleApostrophes: Apostrophes) {
         when (this) {
             is Control -> {
                 out.append(".$name")
@@ -236,7 +264,7 @@ internal sealed class Line {
                                     is Inline.Bold -> inline.text
                                 }
                             var text = escapeInline(rawText)
-                            if (handleApostrophes) {
+                            if (handleApostrophes == Apostrophes.Handle) {
                                 text = escapeApostrophes(text)
                             }
                             text = escapeLeadingCc(text)
@@ -270,6 +298,21 @@ internal sealed class Line {
         }
         out.append("\n")
     }
+
+    /**
+     * Overload for boolean flag.
+     */
+    fun render(out: Appendable, handleApostrophes: Boolean) {
+        render(out, if (handleApostrophes) Apostrophes.Handle else Apostrophes.DontHandle)
+    }
+}
+
+/**
+ * Special handling for apostrophes.
+ */
+internal enum class Apostrophes {
+    Handle,
+    DontHandle,
 }
 
 /**
@@ -324,3 +367,5 @@ private const val APOSTROPHE = "\\*(Aq"
 private const val APOSTROPHE_PREAMBLE = """.ie \n(.g .ds Aq \(aq
 .el .ds Aq '
 """
+
+private const val APOSTROPHE_PREABMLE = APOSTROPHE_PREAMBLE
